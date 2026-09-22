@@ -93,6 +93,12 @@ test("linter flags marketing language", () => {
   const r = lintItem(catalog.items.find((i) => i.id === "mug-tatra")!);
   assert.ok(r.score < 50);
   assert.ok(r.issues.some((i) => i.message.includes("marketing")));
+  const sample = catalog.items[0];
+  const phrases = lintItem({ ...sample, title: "#1 world-class grinder", summary: "A must-have tool with premium quality construction." });
+  const message = phrases.issues.find((i) => i.message.includes("marketing"))!.message;
+  for (const phrase of ["#1", "world-class", "must-have", "premium quality"]) assert.ok(message.includes(phrase));
+  const factual = lintItem({ ...sample, title: "Coffee beans", summary: "Harvested near a stunningly tall tree; packed in numbered bags." });
+  assert.ok(!factual.issues.some((i) => i.message.includes("marketing")), "whole phrases must not match inside longer words");
 });
 
 test("attribute filters, delivery window and currency constraints", () => {
