@@ -1,0 +1,28 @@
+name: Protocol adapter
+description: Request or claim an adapter for an agent / payment protocol
+labels: [adapter]
+body:
+  - type: input
+    id: protocol
+    attributes:
+      label: Protocol and version
+      placeholder: "UCP 2026-01, ACP, AP2, x402, …"
+    validations:
+      required: true
+  - type: input
+    id: spec
+    attributes:
+      label: Link to the specification
+    validations:
+      required: true
+  - type: textarea
+    id: mapping
+    attributes:
+      label: How does it map onto Merx operations?
+      description: e.g. "checkout session create → create_quote"
+  - type: checkboxes
+    id: owner
+    attributes:
+      label: Contribution
+      options:
+        - label: I want to implement this adapter

@@ -1,0 +1,166 @@
+{
+  "store": {
+    "id": "tatra-coffee",
+    "name": "Tatra Coffee Roasters",
+    "url": "https://tatra-coffee.example",
+    "description": "Small-batch specialty coffee roaster and brewing gear, Košice, Slovakia",
+    "currency": "EUR",
+    "languages": ["en", "sk"],
+    "legal": { "company": "Tatra Coffee s.r.o. (fictional)", "country": "SK", "vat_id": "SK0000000000", "contact_email": "agents@tatra-coffee.example" }
+  },
+  "policies": {
+    "returns": { "window_days": 14, "condition": "unopened food; equipment in original packaging", "refund": "full", "return_shipping_paid_by": "buyer" },
+    "shipping": [
+      { "id": "packeta-sk", "carrier": "Packeta", "regions": ["SK"], "price": 290, "free_over": 3500, "days": [1, 2] },
+      { "id": "dpd-cz", "carrier": "DPD", "regions": ["CZ"], "price": 490, "free_over": 5000, "days": [2, 3] },
+      { "id": "dpd-eu", "carrier": "DPD", "regions": ["AT", "HU", "PL", "DE"], "price": 890, "days": [3, 5] }
+    ],
+    "warranty_months": 24,
+    "payment_methods": ["bank_transfer"],
+    "tax_included": true
+  },
+  "negotiation": {
+    "enabled": true,
+    "max_rounds": 3,
+    "rules": [
+      { "type": "volume", "min_qty": 3, "discount_pct": 5 },
+      { "type": "volume", "min_qty": 10, "discount_pct": 12 },
+      { "type": "bundle", "min_distinct_items": 3, "discount_pct": 4 }
+    ]
+  },
+  "items": [
+    {
+      "id": "beans-ethiopia-guji-250",
+      "gtin": "8580000000011",
+      "group_id": "ethiopia-guji",
+      "title": "Ethiopia Guji Natural, whole bean, 250 g",
+      "summary": "Light roast single origin, natural process. Cup notes: blueberry, jasmine, cacao nib. Roasted within 7 days of shipping.",
+      "category": ["coffee", "beans"],
+      "attributes": [
+        { "key": "net_weight", "value": 250, "unit": "g", "source": "measured" },
+        { "key": "roast_level", "value": "light", "source": "declared" },
+        { "key": "origin_country", "value": "ET", "source": "certified" },
+        { "key": "process", "value": "natural", "source": "declared" },
+        { "key": "altitude", "value": 2100, "unit": "m", "source": "third_party", "note": "importer data" },
+        { "key": "acidity_level", "value": 4, "source": "declared", "note": "1 (low) to 5 (high), roaster cupping" },
+        { "key": "grind", "value": "whole_bean", "source": "declared" },
+        { "key": "roast_to_ship_max", "value": 7, "unit": "d", "source": "declared" },
+        { "key": "caffeine", "value": true, "source": "declared" }
+      ],
+      "claims": [
+        { "id": "organic_eu", "statement": "EU organic certified", "evidence": { "type": "certificate", "issuer": "SK-BIO-002", "ref": "BIO-2026-1187" } },
+        { "id": "specialty_grade", "statement": "SCA cupping score 87", "evidence": { "type": "lab_report", "issuer": "Q-grader cupping, lot GJ-26-04", "ref": "GJ-26-04" } }
+      ],
+      "best_for": ["filter", "pour over", "aeropress", "fruity", "light roast"],
+      "not_for": ["espresso", "milk drinks", "low acidity", "dark roast"],
+      "price": 1490,
+      "stock": 64,
+      "lead_time_days": 1,
+      "media": [{ "type": "image", "url": "https://tatra-coffee.example/img/guji.jpg", "alt": "250 g kraft bag with valve" }],
+      "negotiation": { "floor_price": 1250 }
+    },
+    {
+      "id": "beans-brazil-cerrado-1kg",
+      "gtin": "8580000000028",
+      "title": "Brazil Cerrado, whole bean, 1 kg",
+      "summary": "Medium-dark roast, pulped natural. Cup notes: milk chocolate, hazelnut. Low acidity, designed for espresso and milk drinks.",
+      "category": ["coffee", "beans"],
+      "attributes": [
+        { "key": "net_weight", "value": 1000, "unit": "g", "source": "measured" },
+        { "key": "roast_level", "value": "medium_dark", "source": "declared" },
+        { "key": "origin_country", "value": "BR", "source": "certified" },
+        { "key": "process", "value": "pulped_natural", "source": "declared" },
+        { "key": "acidity_level", "value": 1, "source": "declared", "note": "1 (low) to 5 (high)" },
+        { "key": "grind", "value": "whole_bean", "source": "declared" },
+        { "key": "caffeine", "value": true, "source": "declared" }
+      ],
+      "claims": [
+        { "id": "rainforest_alliance", "statement": "Rainforest Alliance certified farm", "evidence": { "type": "certificate", "issuer": "Rainforest Alliance", "ref": "RA-C-0000000" } }
+      ],
+      "best_for": ["espresso", "milk drinks", "cappuccino", "moka pot", "low acidity", "office"],
+      "not_for": ["light roast", "fruity"],
+      "price": 3290,
+      "stock": 38,
+      "lead_time_days": 1,
+      "negotiation": { "floor_price": 2790 }
+    },
+    {
+      "id": "beans-colombia-decaf-250",
+      "gtin": "8580000000035",
+      "title": "Colombia Decaf (sugarcane EA), whole bean, 250 g",
+      "summary": "Medium roast decaffeinated via sugarcane ethyl acetate process. Cup notes: caramel, red apple. Residual caffeine below 0.1 %.",
+      "category": ["coffee", "beans"],
+      "attributes": [
+        { "key": "net_weight", "value": 250, "unit": "g", "source": "measured" },
+        { "key": "roast_level", "value": "medium", "source": "declared" },
+        { "key": "origin_country", "value": "CO", "source": "certified" },
+        { "key": "decaf_method", "value": "sugarcane_ea", "source": "third_party" },
+        { "key": "residual_caffeine", "value": 0.08, "unit": "%", "source": "lab_test" },
+        { "key": "acidity_level", "value": 2, "source": "declared" },
+        { "key": "caffeine", "value": false, "source": "lab_test" }
+      ],
+      "claims": [],
+      "best_for": ["decaf", "evening", "pregnancy", "espresso", "filter"],
+      "not_for": ["caffeine"],
+      "price": 1390,
+      "stock": 22,
+      "lead_time_days": 1,
+      "negotiation": { "floor_price": 1250 }
+    },
+    {
+      "id": "grinder-hand-c40",
+      "gtin": "8580000000042",
+      "title": "Hand burr grinder, 39 mm steel conical burrs",
+      "summary": "Manual grinder with 39 mm stainless conical burrs, 35 g hopper, stepped adjustment 30 clicks. Suitable for filter to fine espresso.",
+      "category": ["equipment", "grinders"],
+      "attributes": [
+        { "key": "burr_type", "value": "conical", "source": "declared" },
+        { "key": "burr_diameter", "value": 39, "unit": "mm", "source": "measured" },
+        { "key": "burr_material", "value": "stainless_steel", "source": "declared" },
+        { "key": "hopper_capacity", "value": 35, "unit": "g", "source": "measured" },
+        { "key": "adjustment_steps", "value": 30, "source": "declared" },
+        { "key": "weight", "value": 640, "unit": "g", "source": "measured" },
+        { "key": "power", "value": "manual", "source": "declared" }
+      ],
+      "claims": [],
+      "best_for": ["grinder", "travel", "pour over", "aeropress", "espresso"],
+      "not_for": ["large batches", "office", "electric"],
+      "price": 8900,
+      "stock": 7,
+      "lead_time_days": 2,
+      "negotiation": { "floor_price": 7900 }
+    },
+    {
+      "id": "filters-v60-02-100",
+      "gtin": "8580000000059",
+      "title": "Paper filters, cone size 02, 100 pcs",
+      "summary": "Unbleached paper cone filters for 02-size drippers (1–4 cups). Pack of 100.",
+      "category": ["equipment", "filters"],
+      "attributes": [
+        { "key": "pieces", "value": 100, "source": "measured" },
+        { "key": "size", "value": "02", "source": "declared" },
+        { "key": "bleached", "value": false, "source": "declared" },
+        { "key": "compatible_with", "value": ["V60 02", "Kalita cone 02", "generic cone 02"], "source": "declared" }
+      ],
+      "best_for": ["pour over", "filter"],
+      "not_for": ["flat bottom dripper", "espresso"],
+      "price": 690,
+      "stock": 140,
+      "lead_time_days": 1
+    },
+    {
+      "id": "mug-tatra",
+      "title": "Tatra mug",
+      "summary": "The best mug ever! Amazing premium quality, a must-have for every coffee lover.",
+      "category": ["merch", "mugs"],
+      "attributes": [
+        { "key": "volume", "value": 300 },
+        { "key": "material", "value": "ceramic", "source": "declared" }
+      ],
+      "claims": [{ "id": "dishwasher_safe", "statement": "Dishwasher safe" }],
+      "price": 1200,
+      "stock": 30,
+      "lead_time_days": 3
+    }
+  ]
+}

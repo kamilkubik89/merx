@@ -1,0 +1,11 @@
+node_modules/
+.merx/
+*.pem
+.env
+.env.*
+!.env.example
+*.key
+*.log
+.DS_Store
+lcov.info
+coverage/

@@ -1,0 +1,47 @@
+{
+  "name": "merx",
+  "version": "0.1.0",
+  "description": "Open-source commerce engine for stores that sell only to AI agents. Signed feeds, intent matching, policy negotiation, mandate-bound checkout. Any protocol via adapters (MCP, A2A, REST, bring your own).",
+  "type": "module",
+  "license": "MIT",
+  "author": "Kamil Kubík (https://github.com/kamilkubik89)",
+  "homepage": "https://github.com/kamilkubik89/merx#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kamilkubik89/merx.git"
+  },
+  "bugs": {
+    "url": "https://github.com/kamilkubik89/merx/issues"
+  },
+  "engines": {
+    "node": ">=22.6"
+  },
+  "bin": {
+    "merx": "src/cli.ts"
+  },
+  "scripts": {
+    "start": "node --experimental-strip-types --disable-warning=ExperimentalWarning src/server.ts",
+    "demo": "node --experimental-strip-types --disable-warning=ExperimentalWarning examples/buyer-agent.ts",
+    "merx": "node --experimental-strip-types --disable-warning=ExperimentalWarning src/cli.ts",
+    "lint:catalog": "node --experimental-strip-types --disable-warning=ExperimentalWarning src/cli.ts lint",
+    "test": "node --experimental-strip-types --disable-warning=ExperimentalWarning --test test/*.test.ts",
+    "test:coverage": "node --experimental-strip-types --disable-warning=ExperimentalWarning --test --experimental-test-coverage --test-coverage-lines=90 --test-coverage-branches=75 --test-coverage-include=src/** --test-coverage-exclude=src/server.ts --test-coverage-exclude=src/cli.ts --test-coverage-exclude=src/adapters/_template.ts --test-reporter=spec --test-reporter-destination=stdout --test-reporter=lcov --test-reporter-destination=lcov.info test/*.test.ts",
+    "typecheck": "tsc --noEmit",
+    "check": "npm run typecheck && npm run test:coverage && npm run lint:catalog -- --min 70"
+  },
+  "keywords": [
+    "agentic-commerce",
+    "ai-agents",
+    "ecommerce",
+    "mcp",
+    "a2a",
+    "headless",
+    "product-feed",
+    "ap2",
+    "ucp"
+  ],
+  "devDependencies": {
+    "@types/node": "^22.10.0",
+    "typescript": "^5.8.0"
+  }
+}

@@ -1,0 +1,29 @@
+name: Bug report
+description: Something in Merx does not work as documented
+labels: [bug]
+body:
+  - type: textarea
+    id: what
+    attributes:
+      label: What happened?
+      description: Include the request you sent and the response you got.
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: What did you expect?
+    validations:
+      required: true
+  - type: dropdown
+    id: surface
+    attributes:
+      label: Where?
+      options: [REST, MCP, A2A, CLI, Feed / spec, Engine, Other]
+    validations:
+      required: true
+  - type: input
+    id: version
+    attributes:
+      label: Merx version and Node.js version
+      placeholder: "merx 0.1.0, node 22.12"

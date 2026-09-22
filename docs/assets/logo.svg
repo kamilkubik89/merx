@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" width="120" height="120" role="img" aria-label="Merx logo">
+  <defs>
+    <linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#14b8a6"/>
+      <stop offset="1" stop-color="#0f766e"/>
+    </linearGradient>
+  </defs>
+  <rect x="6" y="6" width="108" height="108" rx="26" fill="url(#g)"/>
+  <!-- a parcel seen from above, folded into an M -->
+  <path d="M30 84V38l30 24 30-24v46" fill="none" stroke="#fff" stroke-width="9" stroke-linecap="round" stroke-linejoin="round"/>
+  <!-- agent nodes -->
+  <circle cx="30" cy="38" r="7" fill="#fff"/>
+  <circle cx="90" cy="38" r="7" fill="#fff"/>
+  <circle cx="60" cy="62" r="7" fill="#99f6e4"/>
+</svg>

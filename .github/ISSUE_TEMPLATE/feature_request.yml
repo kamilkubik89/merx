@@ -1,0 +1,21 @@
+name: Feature / spec proposal
+description: Propose a new capability or a change to the Merx spec
+labels: [enhancement]
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: Which buyer-agent or merchant problem does this solve?
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposal
+      description: If it changes the feed, mandate or receipt format, show the JSON.
+    validations:
+      required: true
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives considered
