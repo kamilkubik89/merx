@@ -17,7 +17,7 @@ const mandate = (over: Partial<MandatePayload> = {}) => {
   };
   return { payload, signature: signObject(payload, wallet).value };
 };
-const buyer = { name: "Test", email: "t@example.sk", address: { line1: "x", city: "Košice", postal_code: "04001", country: "SK" } };
+const buyer = { name: "Test", email: "t@example.sk", address: { line1: "x", city: "Kosice", postal_code: "04001", country: "SK" } };
 
 test("canonical JSON is key-order independent", () => {
   assert.equal(canonicalize({ b: 1, a: [{ d: 2, c: 3 }] }), canonicalize({ a: [{ c: 3, d: 2 }], b: 1 }));

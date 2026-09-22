@@ -3,7 +3,7 @@
  * Run:  npm run demo
  *
  * The human said: "Buy me good coffee for my espresso machine, organic if
- * possible, and a hand grinder. Max 150 EUR. Deliver to Košice this week."
+ * possible, and a hand grinder. Max 150 EUR. Deliver to Kosice this week."
  */
 import { readFileSync } from "node:fs";
 import { randomUUID } from "node:crypto";
@@ -87,7 +87,7 @@ try {
   step(7, "Place the order");
   const order = await call("POST", "/v1/orders", {
     quote_id: quote.quote_id, mandate,
-    buyer: { name: "Jana Nováková", email: "jana@example.sk", address: { line1: "Hlavná 1", city: "Košice", postal_code: "04001", country: "SK" } },
+    buyer: { name: "Jane Smith", email: "jana@example.sk", address: { line1: "1 Main Street", city: "Kosice", postal_code: "04001", country: "SK" } },
   });
   console.log(`   ${order.order_id} — ${order.status}, pay via ${order.payment.method}`);
   const receiptOk = verifyObject(order.receipt.payload, order.receipt.signature.value, storeKey);

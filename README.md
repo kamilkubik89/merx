@@ -24,7 +24,7 @@
   <a href="docs/SPEC.md">Spec</a> ·
   <a href="docs/ADAPTERS.md">Adapters</a> ·
   <a href="#status-and-roadmap">Roadmap</a> ·
-  <a href="docs/README.sk.md">Slovensky</a>
+  <a href="docs/OVERVIEW.md">Overview</a>
 </p>
 
 ---

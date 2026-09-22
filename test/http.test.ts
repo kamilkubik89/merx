@@ -37,7 +37,7 @@ function mandate(over: Partial<MandatePayload> = {}) {
   };
   return { payload, signature: signObject(payload, w).value };
 }
-const buyer = { name: "Test", email: "t@example.sk", address: { line1: "Hlavná 1", city: "Košice", postal_code: "04001", country: "SK" } };
+const buyer = { name: "Test", email: "t@example.sk", address: { line1: "1 Main Street", city: "Kosice", postal_code: "04001", country: "SK" } };
 
 describe("discovery", () => {
   test("manifest lists protocols and a usable public key", async () => {

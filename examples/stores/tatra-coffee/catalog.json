@@ -3,9 +3,9 @@
     "id": "tatra-coffee",
     "name": "Tatra Coffee Roasters",
     "url": "https://tatra-coffee.example",
-    "description": "Small-batch specialty coffee roaster and brewing gear, Košice, Slovakia",
+    "description": "Small-batch specialty coffee roaster and brewing gear, Kosice, Slovakia",
     "currency": "EUR",
-    "languages": ["en", "sk"],
+    "languages": ["en"],
     "legal": { "company": "Tatra Coffee s.r.o. (fictional)", "country": "SK", "vat_id": "SK0000000000", "contact_email": "agents@tatra-coffee.example" }
   },
   "policies": {
