@@ -4,6 +4,12 @@ All notable changes to this project are documented here. The format follows [Kee
 
 ## [Unreleased]
 
+### Added
+- Quick demo walkthrough, repository banner, dev container, first-contribution guide and English launch kit.
+
+### Fixed
+- Complete regular-expression escaping in the catalog linter's marketing phrase matcher.
+
 ## [0.1.0] - 2026-09-22
 
 ### Added

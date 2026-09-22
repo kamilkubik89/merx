@@ -24,7 +24,7 @@ export function lintItem(item: CatalogItem): ItemReport {
   };
 
   const text = `${item.title} ${item.summary}`.toLowerCase();
-  const hype = HYPE.filter((h) => new RegExp(`(^|[^a-z])${h.replace(/[#-]/g, "\\$&")}([^a-z]|$)`).test(text));
+  const hype = HYPE.filter((h) => new RegExp(`(^|[^a-z])${h.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}([^a-z]|$)`).test(text));
   if (hype.length) hit("error", "summary", `marketing language agents ignore or distrust: ${hype.join(", ")}. State the fact instead.`, 10 * hype.length);
   if (item.summary.length > 280) hit("warn", "summary", "summary > 280 chars; keep it a factual one-liner", 5);
   if (item.summary.length < 30) hit("warn", "summary", "summary too short to be useful", 5);

@@ -1,18 +1,18 @@
 <p align="center">
-  <img src="docs/assets/logo.svg" width="96" height="96" alt="Merx">
+  <img src="docs/assets/banner.svg" width="1280" alt="Merx — Commerce for AI agents. Discover, match, negotiate, authorize and get a signed receipt over MCP, A2A or REST.">
 </p>
 
 <h1 align="center">Merx</h1>
 
 <p align="center">
-  <strong>The open-source store engine for customers who aren't human.</strong><br>
-  Signed feeds · intent matching · policy negotiation · mandate-bound checkout · any agent protocol
+  <strong>An open-source store engine for AI agents.</strong><br>
+  Signed feeds · explainable matching · policy negotiation · mandate-bound orders
 </p>
 
 <p align="center">
   <a href="https://github.com/kamilkubik89/merx/actions/workflows/ci.yml"><img src="https://github.com/kamilkubik89/merx/actions/workflows/ci.yml/badge.svg" alt="CI"></a>
   <a href="https://github.com/kamilkubik89/merx/actions/workflows/codeql.yml"><img src="https://github.com/kamilkubik89/merx/actions/workflows/codeql.yml/badge.svg" alt="CodeQL"></a>
-  <img src="https://img.shields.io/badge/coverage-98%25-brightgreen" alt="Coverage 98%">
+  <a href="https://github.com/kamilkubik89/merx/releases/latest"><img src="https://img.shields.io/github/v/release/kamilkubik89/merx" alt="Latest release"></a>
   <a href="LICENSE"><img src="https://img.shields.io/github/license/kamilkubik89/merx" alt="MIT license"></a>
   <img src="https://img.shields.io/badge/node-%E2%89%A522.6-339933?logo=nodedotjs&logoColor=white" alt="Node ≥ 22.6">
   <img src="https://img.shields.io/badge/runtime%20dependencies-0-blue" alt="Zero runtime dependencies">
@@ -24,12 +24,46 @@
   <a href="docs/SPEC.md">Spec</a> ·
   <a href="docs/ADAPTERS.md">Adapters</a> ·
   <a href="#status-and-roadmap">Roadmap</a> ·
-  <a href="docs/OVERVIEW.md">Overview</a>
+  <a href="https://github.com/kamilkubik89/merx/discussions">Discussions</a> ·
+  <a href="CONTRIBUTING.md#first-contributions">Contribute</a>
 </p>
 
 ---
 
-Merx is a commerce engine for shops that sell only to AI agents. No theme, no cart page, no checkout button, no front end at all. A Merx store is a domain that answers one question well: *"Here is what my human needs — can you supply it, on what terms, and can you prove it?"*
+Merx lets a buyer agent discover products, check evidence, negotiate within published rules and place an order with a signed spending mandate. One TypeScript engine exposes the same operations over **MCP, A2A and REST**.
+
+Use it to prototype commerce agents, build protocol adapters or experiment with machine-readable catalogs. **Early reference implementation:** in-memory storage and example payment instructions; see the [limitations](#status-and-roadmap).
+
+## Quickstart
+
+With **Node.js 22.6+** and Git installed:
+
+```bash
+git clone https://github.com/kamilkubik89/merx.git
+cd merx
+npm run demo
+```
+
+**No API key, model subscription or dependency installation is needed for the demo.** It starts a local store, runs a scripted buyer and shuts down automatically. Matching is lexical and negotiation is deterministic.
+
+The demo verifies a signed feed, selects coffee, negotiates a grinder and submits an order within a EUR 150 mandate. Its output includes:
+
+```text
+6 items, signature valid: true
+TOTAL 113.15 € (VAT incl.)
+store-signed receipt valid: true
+rejected as expected: 409 ... mandate nonce already used (replay)
+```
+
+This is an abbreviated excerpt of the example run. Payment instructions are returned; no money is transferred.
+
+[![Open in GitHub Codespaces](https://github.com/codespaces/badge.svg)](https://codespaces.new/kamilkubik89/merx)
+
+In Codespaces, wait for setup, then run `npm run demo` in the terminal. GitHub account quotas and billing apply.
+
+If this is useful to your work, **[star Merx](https://github.com/kamilkubik89/merx)** to bookmark it, or [share your use case](https://github.com/kamilkubik89/merx/discussions).
+
+### What the store exposes
 
 ```
 $ curl https://tatra-coffee.example/
@@ -71,7 +105,7 @@ Agent-readiness: 82/100
        error claims.dishwasher_safe: claim without evidence will be hidden from strict agents
 ```
 
-**2. `not_for` — radical honesty as a ranking signal.** Each product declares who should *not* buy it. An agent that learns a store is honest about fit will trust it more; a store that tries to sell a light-roast Ethiopian to someone who wants espresso loses the agent's trust across all future purchases. Merx makes that honesty a first-class field and the matcher penalises mismatches openly.
+**2. `not_for` — explicit product limitations.** Each product declares who should *not* buy it. The matcher penalises conflicts with those declarations and includes a warning in its result. This gives agents a concrete signal about product fit; Merx does not implement a reputation system.
 
 **3. Intent in, reasons out.** Agents don't browse. They send a need plus hard constraints and get ranked matches with *why*, and every rejected product with *why not*:
 
@@ -104,22 +138,25 @@ sequenceDiagram
     S-->>A: order + payment instructions + signed receipt
 ```
 
-## Quickstart
+## Run your own store
 
 Requires Node.js 22.6+. Zero runtime dependencies: TypeScript runs directly through Node's type stripping.
 
 ```bash
-git clone https://github.com/kamilkubik89/merx && cd merx
-npm install          # dev tooling only (typescript for typecheck)
-npm run demo         # a scripted agent buys coffee end-to-end
 npm start            # run the example store on :3000
-npm test             # 34 unit + integration tests
+```
+
+For development checks, install the locked development dependencies:
+
+```bash
+npm ci               # dev tooling only
+npm test             # unit + integration tests
 npm run check        # what CI runs: typecheck, coverage gate, catalog lint
 ```
 
 Then point any agent at it:
 
-- **MCP** (Claude Desktop, IDE agents, any MCP client): `http://localhost:3000/mcp`
+- **MCP** (clients supporting Streamable HTTP): `http://localhost:3000/mcp`
 - **A2A**: agent card at `http://localhost:3000/.well-known/agent-card.json`
 - **REST**: `http://localhost:3000/openapi.json`
 - **LLM-friendly summary**: `http://localhost:3000/llms.txt`
@@ -129,6 +166,13 @@ Run your own store: write a `catalog.json` (see [`examples/stores/tatra-coffee`]
 ```bash
 npm run merx -- lint my-catalog.json
 MERX_CATALOG=my-catalog.json npm start
+```
+
+In PowerShell, set the environment variable before starting the server:
+
+```powershell
+$env:MERX_CATALOG = "my-catalog.json"
+npm start
 ```
 
 Useful env vars: `PORT`, `MERX_CATALOG`, `MERX_PRIVATE_KEY` or `MERX_KEY_FILE`, `MERX_WEBHOOK_URL` (receives `order.created`).
@@ -203,7 +247,9 @@ Every push and pull request runs on GitHub Actions against Node 22 and 24: typec
 
 ## Contributing
 
-Issues and PRs are welcome: see [CONTRIBUTING.md](CONTRIBUTING.md), the [code of conduct](CODE_OF_CONDUCT.md) and the [security policy](SECURITY.md). Adapter proposals have their own issue template.
+Start with the [first-contribution guide](CONTRIBUTING.md#first-contributions), ask a question in [Discussions](https://github.com/kamilkubik89/merx/discussions), or use a [bug / adapter / feature template](https://github.com/kamilkubik89/merx/issues/new/choose). Small, tested improvements are welcome.
+
+See the [code of conduct](CODE_OF_CONDUCT.md) and [security policy](SECURITY.md). Want to share the project? The [launch kit](docs/LAUNCH_KIT.md) includes a demo outline and editable English copy.
 
 ## License
 
