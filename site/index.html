@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Merx — Open-source commerce engine for AI agents</title>
+  <meta name="description" content="Build stores for AI agents with signed product feeds, explainable matching, policy negotiation and mandate-bound orders. TypeScript. MCP, A2A and REST. MIT licensed.">
+  <meta name="theme-color" content="#0b252c">
+  <link rel="canonical" href="https://kamilkubik89.github.io/merx/">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Merx — Commerce for AI agents">
+  <meta property="og:description" content="Explore real matching results, then run a complete scripted purchase locally. No API keys needed.">
+  <meta property="og:url" content="https://kamilkubik89.github.io/merx/">
+  <meta property="og:image" content="https://kamilkubik89.github.io/merx/assets/social-preview.png">
+  <meta property="og:image:width" content="1280">
+  <meta property="og:image:height" content="640">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Merx — Commerce for AI agents">
+  <meta name="twitter:description" content="An open-source TypeScript store engine with MCP, A2A and REST adapters.">
+  <meta name="twitter:image" content="https://kamilkubik89.github.io/merx/assets/social-preview.png">
+  <link rel="icon" href="assets/logo.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="style.css">
+  <script src="app.js" defer></script>
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"SoftwareSourceCode","name":"Merx","description":"Open-source commerce engine for AI agents with signed product feeds, intent matching, policy negotiation and mandate-bound orders.","url":"https://kamilkubik89.github.io/merx/","codeRepository":"https://github.com/kamilkubik89/merx","programmingLanguage":"TypeScript","runtimePlatform":"Node.js 22.6+","license":"https://opensource.org/license/mit","author":{"@type":"Person","name":"Kamil Kubík","url":"https://github.com/kamilkubik89"}}</script>
+</head>
+<body>
+  <a class="skip" href="#main">Skip to content</a>
+  <header class="wrap nav">
+    <a class="brand" href="./" aria-label="Merx home"><img src="assets/logo.svg" alt="" width="36" height="36">merx</a>
+    <nav aria-label="Main navigation"><a href="#explore">Explore</a><a href="#start">Quickstart</a><a href="https://github.com/kamilkubik89/merx">GitHub ↗</a></nav>
+  </header>
+  <main id="main">
+    <section class="wrap hero">
+      <div class="hero-copy">
+        <p class="eyebrow">OPEN-SOURCE / AGENT COMMERCE</p>
+        <h1>The next customer<br>is an <span>agent.</span></h1>
+        <p class="intro">Give it a store it can reason about. Merx turns product facts, buying constraints and merchant policies into explainable matches and signed orders.</p>
+        <div class="actions"><a class="button primary" href="#explore">Explore the engine <span aria-hidden="true">↓</span></a><a class="button secondary" href="https://github.com/kamilkubik89/merx">View on GitHub ↗</a></div>
+        <p class="meta">TypeScript <span>·</span> Zero runtime dependencies <span>·</span> MIT</p>
+      </div>
+      <div class="terminal" aria-label="Illustrated purchase flow">
+        <div class="terminal-bar"><span class="dots" aria-hidden="true">● ● ●</span><span>buyer → merx store</span></div>
+        <div class="terminal-body">
+          <p class="dim">// one need, verifiable decisions</p>
+          <p class="prompt">“Coffee for espresso. Low acidity.”</p>
+          <ol class="flow"><li><span>01</span><div>Discover the store<small>manifest + public key</small></div></li><li><span>02</span><div>Match with reasons<small>facts + constraints + limitations</small></div></li><li><span>03</span><div>Negotiate within policy<small>bounded rounds + signed deal token</small></div></li><li><span>04</span><div>Authorize the order<small>signed spending mandate</small></div></li></ol>
+          <p class="receipt">✓ Signed receipt returned</p><p class="dim footnote">Illustrated flow. Example payments are not settled.</p>
+        </div>
+      </div>
+    </section>
+    <div class="protocols"><div class="wrap"><span>One engine. Three adapters.</span><strong>MCP</strong><strong>A2A</strong><strong>REST / OpenAPI</strong></div></div>
+    <section class="wrap section" id="explore">
+      <div class="section-heading"><div><p class="eyebrow">SEE THE REASONING</p><h2>A match is more than a keyword.</h2></div><p>Explore actual engine output for a fictional coffee store. Each scenario is calculated from the example catalog when this site is built.</p></div>
+      <div class="demo-controls"><label for="scenario">Buyer intent</label><select id="scenario" disabled><option>Loading examples…</option></select><span class="tag">Build-time snapshot · no live checkout</span></div>
+      <p id="demo-status" role="status" aria-live="polite">Loading engine results…</p>
+      <div id="demo-results" class="demo-results" hidden>
+        <div class="request-panel"><h3>The request</h3><pre><code id="request-json"></code></pre><p>Amounts use integer minor units: <code>8000</code> means EUR 80.00.</p></div>
+        <div><h3 id="results-heading">Matches</h3><div id="matches"></div><details class="rejections"><summary id="rejection-count">Why other products were rejected</summary><ul id="rejections"></ul></details></div>
+      </div>
+      <noscript><p>JavaScript is needed for the scenario explorer. The espresso example ranks Brazil Cerrado first; the caffeine-free request returns Colombia Decaf; the grinder request under EUR 80 has no match and suggests negotiation. <a href="https://github.com/kamilkubik89/merx/blob/main/examples/buyer-agent.ts">Read the complete buyer example on GitHub.</a></p></noscript>
+    </section>
+    <section class="tinted"><div class="wrap section">
+      <p class="eyebrow">DESIGNED FOR SOFTWARE BUYERS</p><h2>Facts in. Decisions out.</h2>
+      <div class="features"><article><span class="feature-number">01 / CATALOG</span><h3>Evidence travels with the product.</h3><p>Structured attributes record their source. Claims carry evidence, and <code>not_for</code> makes product limitations explicit.</p></article><article><span class="feature-number">02 / NEGOTIATION</span><h3>Rules a merchant can audit.</h3><p>Published discounts, private price floors and bounded rounds produce deterministic offers with signed deal tokens.</p></article><article><span class="feature-number">03 / CHECKOUT</span><h3>Authorization has a boundary.</h3><p>Mandates include spending limits, merchant scope, expiry and a single-use nonce. Orders return a verifiable signed receipt.</p></article></div>
+    </div></section>
+    <section class="wrap section start" id="start">
+      <div><p class="eyebrow">TRY THE COMPLETE FLOW</p><h2>Three commands.<br>No API keys.</h2><p>Install Node.js 22.6+ and Git, then run the scripted buyer locally. It starts a store, places a sample order, checks its receipt and demonstrates replay rejection.</p><p>No LLM account or dependency installation is needed for this demo.</p><a class="text-link" href="https://github.com/kamilkubik89/merx#run-your-own-store">Run your own store →</a></div>
+      <div><div class="code-block"><div class="code-heading"><span>Terminal</span><button id="copy" type="button">Copy commands</button></div><pre><code id="commands">git clone https://github.com/kamilkubik89/merx.git
+cd merx
+npm run demo</code></pre></div><p id="copy-status" role="status" aria-live="polite"></p><p class="small">Prefer a browser workspace? <a href="https://codespaces.new/kamilkubik89/merx">Open in Codespaces</a>. GitHub account quotas and billing apply.</p></div>
+    </section>
+    <section class="wrap section faq" id="faq">
+      <p class="eyebrow">BEFORE YOU BUILD</p><h2>What Merx is ready for.</h2>
+      <details open><summary>Is this production-ready?</summary><p>No. Merx is a reference implementation and a draft specification. State is in memory, the sample provider returns bank-transfer instructions, and production wallet identity requires a trusted-key policy. Use it for experiments and integration prototypes.</p></details>
+      <details><summary>Does the demo use an LLM or make real payments?</summary><p>No. The buyer is scripted, matching is lexical and negotiation follows deterministic rules. The demo verifies signatures and creates an example order; it does not transfer money.</p></details>
+      <details><summary>Which protocols are implemented?</summary><p>MCP, A2A and REST/OpenAPI adapters are included. UCP, ACP, AP2 and x402 integrations are roadmap items. The current mandate format is Merx-specific and inspired by AP2; it is not an AP2 implementation.</p></details>
+      <details><summary>Does it replace Shopify or WooCommerce?</summary><p>Merx explores a store engine designed for agents. It currently has no merchant dashboard, persistent order database or production payment integration. It is not a drop-in replacement for a production commerce platform.</p></details>
+      <details><summary>How can I help?</summary><p>Try a catalog, report a reproducible issue or propose a protocol mapping. The <a href="https://github.com/kamilkubik89/merx/blob/main/CONTRIBUTING.md#first-contributions">first-contribution guide</a> offers small tasks. Larger payment and persistence work starts with a design discussion.</p></details>
+    </section>
+    <section class="wrap section"><p class="eyebrow">BUILDING IN THE OPEN</p><h2>Agentic commerce needs a community.</h2><div class="features"><article><h3>Build the ecosystem with us.</h3><p>Catalog engineers, merchants, payment integrators and agent developers: bring a problem and help turn it into a testable interface.</p><p><a href="agentic-commerce.html">Join the open-source community →</a></p></article><article><h3>Beyond the XML product feed.</h3><p>Explore signed decision packets with reusable product facts, current offers and the next valid action for a buyer agent.</p><p><a href="product-feeds-for-ai-agents.html">Explore the Capability Feed →</a></p></article><article><h3>Payments without one fixed provider.</h3><p>Register providers, discover their capabilities and select a payment method before a quote is signed.</p><p><a href="https://github.com/kamilkubik89/merx/blob/main/docs/PAYMENTS.md">Build a payment integration →</a></p></article></div></section>
+    <section class="wrap closing"><p class="eyebrow">BUILD THE MERCHANT SIDE</p><h2>Build the open agentic commerce ecosystem with us.</h2><p>Try Merx, tell us what is missing, and help shape the next adapter.</p><div class="actions"><a class="button primary" href="https://github.com/kamilkubik89/merx">Explore &amp; star on GitHub ↗</a><a class="button secondary" href="https://github.com/kamilkubik89/merx/discussions">Join the discussion</a></div></section>
+  </main>
+  <footer class="wrap"><span>Merx · MIT licensed · Built by <a href="https://github.com/kamilkubik89">Kamil Kubík</a></span><nav aria-label="Resources"><a href="https://github.com/kamilkubik89/merx/blob/main/docs/SPEC.md">Specification</a><a href="https://github.com/kamilkubik89/merx/releases">Releases</a><a href="https://github.com/kamilkubik89/merx/security/policy">Security</a></nav></footer>
+</body>
+</html>

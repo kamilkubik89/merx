@@ -55,6 +55,23 @@ export const operations: Operation[] = [
     run: (e, a) => e.intent(a),
   },
   {
+    name: "discover_offers",
+    description: "Experimental Merx Capability Feed: signed intent-specific product facts, evidence references, fresh indicative offers and next actions. Reuse facts by hash; request a quote before ordering.",
+    input_schema: {
+      type: "object", required: ["intent"], properties: {
+        intent: { type: "object", required: ["need"], properties: { need: { type: "string", minLength: 1, maxLength: 2000 }, quantity: { type: "integer", minimum: 1 }, limit: { type: "integer", minimum: 1, maximum: 50 }, constraints: { type: "object", description: "Same constraints as find_products: category, currency, max_unit_price, attributes, must_have_claims, ship_to, deliver_within_days" } } },
+        known_facts: { type: "object", description: "Item ID to previously verified facts_revision SHA-256 hash", additionalProperties: { type: "string", pattern: "^[a-f0-9]{64}$" } },
+      },
+    },
+    run: (e, a) => e.discover(a),
+  },
+  {
+    name: "payment_methods",
+    description: "Discover configured payment providers and their advertised protocol identifiers. Optional currency and country filters. Metadata does not imply independent protocol certification.",
+    input_schema: { type: "object", properties: { currency: { type: "string" }, country: { type: "string" } } },
+    run: (e, a) => e.paymentMethods(a),
+  },
+  {
     name: "get_product",
     description: "Full structured record of one product: attributes with provenance, evidenced claims, best_for / not_for, live offer.",
     input_schema: { type: "object", required: ["item_id"], properties: { item_id: { type: "string" } } },
@@ -84,6 +101,7 @@ export const operations: Operation[] = [
         },
         ship_to: { type: "string" },
         shipping_method: { type: "string" },
+        payment_method: { type: "string", description: "ID returned by payment_methods; defaults to the store's configured provider" },
       },
     },
     run: (e, a) => e.createQuote(a),

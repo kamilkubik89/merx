@@ -21,6 +21,6 @@ npm run demo
 npm start
 ```
 
-See the [main README](../README.md) for setup details, architecture and the roadmap. Merx 0.1 is a reference implementation with in-memory storage, not production software.
+See the [main README](../README.md) for setup details, architecture and the roadmap. Merx is a reference implementation with in-memory storage, not production software. Explore the [Capability Feed](CAPABILITY_FEED.md) and [payment integration guide](PAYMENTS.md) for the latest extension points.
 
 Author: [Kamil Kubík](https://github.com/kamilkubik89) · [MIT license](../LICENSE)

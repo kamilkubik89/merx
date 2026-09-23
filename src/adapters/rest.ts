@@ -13,6 +13,9 @@ export const restAdapter: Adapter = {
     r.get("/v1/store", () => e.feed().store);
     r.get("/v1/items/:id", (c) => e.getItem(c.params.id));
     r.post("/v1/intent", (c) => e.intent(c.body));
+    r.post("/v1/discover", (c) => e.discover(c.body));
+    r.post("/v1/payment-methods", (c) => e.paymentMethods(c.body ?? {}));
+    r.get("/v1/payment-methods", (c) => e.paymentMethods({ currency: c.query.get("currency") ?? undefined, country: c.query.get("country") ?? undefined }));
     r.post("/v1/negotiate", (c) => e.negotiate({ ...c.body, agent_id: c.agentId }));
     r.post("/v1/quotes", (c) => e.createQuote(c.body));
     r.post("/v1/orders", (c) => e.placeOrder({ ...c.body, agent_id: c.agentId }));
@@ -25,6 +28,8 @@ export const restAdapter: Adapter = {
 const REST_PATHS: Record<string, [string, string]> = {
   store_info: ["get", "/v1/store"],
   find_products: ["post", "/v1/intent"],
+  discover_offers: ["post", "/v1/discover"],
+  payment_methods: ["post", "/v1/payment-methods"],
   get_product: ["get", "/v1/items/{item_id}"],
   negotiate: ["post", "/v1/negotiate"],
   create_quote: ["post", "/v1/quotes"],

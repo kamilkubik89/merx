@@ -54,6 +54,8 @@ jobs:
 
       - name: End-to-end demo (scripted buyer agent)
         run: npm run demo
+      - name: Capability Feed demo
+        run: npm run demo:feed
 
   docker:
     name: Docker build & smoke test

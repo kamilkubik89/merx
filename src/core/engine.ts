@@ -12,19 +12,13 @@ import type {
   NegotiationResponse, Order, Quote, QuoteLine,
 } from "./types.ts";
 import { toFeedItem } from "./feed.ts";
+import { manualTransfer, PaymentRegistry } from "./payments.ts";
+import type { PaymentProvider } from "./payments.ts";
+import { buildCapabilityPacket } from "./capability-feed.ts";
+import type { CapabilityRequest } from "./capability-feed.ts";
 
-/** Plug in Stripe, GoPay, a bank transfer, x402, whatever. */
-export interface PaymentProvider {
-  id: string;
-  createPayment(order: { order_id: string; total: number; currency: string }): Promise<Record<string, unknown>>;
-}
-
-export const manualTransfer: PaymentProvider = {
-  id: "bank_transfer",
-  async createPayment(o) {
-    return { iban: "SK00 0000 0000 0000 0000 0000", variable_symbol: o.order_id.replace(/\D/g, "").slice(0, 10) || "0", amount: o.total, currency: o.currency, due_in_days: 3 };
-  },
-};
+export { manualTransfer } from "./payments.ts";
+export type { PaymentProvider } from "./payments.ts";
 
 type DealPayload = { typ: "deal"; store: string; item_id: string; quantity: number; unit_price: number; exp: number; sid: string };
 
@@ -33,6 +27,8 @@ export type EngineOptions = {
   privateKeyPem: string;
   scorer?: Scorer;
   payment?: PaymentProvider;
+  payments?: PaymentProvider[];
+  defaultPaymentMethod?: string;
   quoteTtlSeconds?: number;
   dealTtlSeconds?: number;
 };
@@ -45,7 +41,8 @@ export class MerxEngine extends EventEmitter {
   readonly catalog: Catalog;
   readonly keys: KeyPair;
   private scorer: Scorer;
-  private payment: PaymentProvider;
+  private payments: PaymentRegistry;
+  private paymentAttempts = new Map<string, Promise<Order>>();
   private quoteTtl: number;
   private dealTtl: number;
   private sessions = new Map<string, Session>();
@@ -60,7 +57,9 @@ export class MerxEngine extends EventEmitter {
     this.catalog = structuredClone(opts.catalog);
     this.keys = loadKeyPair(opts.privateKeyPem);
     this.scorer = opts.scorer ?? lexicalScorer;
-    this.payment = opts.payment ?? manualTransfer;
+    if (opts.payment && opts.payments) throw new Error("Use either payment or payments, not both");
+    this.payments = new PaymentRegistry(opts.payments ?? [opts.payment ?? manualTransfer], opts.defaultPaymentMethod);
+    this.catalog.policies.payment_methods = this.payments.list().map((p) => p.id);
     this.quoteTtl = opts.quoteTtlSeconds ?? 900;
     this.dealTtl = opts.dealTtlSeconds ?? 900;
     const t = new Date().toISOString();
@@ -74,10 +73,11 @@ export class MerxEngine extends EventEmitter {
       merx: MERX_VERSION,
       store: this.catalog.store,
       public_key: { alg: "Ed25519", key_id: this.keys.keyId, spki_der_b64: this.keys.publicKeyB64 },
-      capabilities: ["feed", "feed.delta", "intent", "negotiate", "quote.hold", "order.mandate", "receipt.signed"],
-      payment_methods: [this.payment.id],
+      capabilities: ["feed", "feed.delta", "intent", "capability-feed", "payment.discovery", "negotiate", "quote.hold", "order.mandate", "receipt.signed"],
+      payment_methods: this.paymentMethods().map((p) => p.id),
+      payment_handlers: this.paymentMethods(),
       mandate: { format: "merx-mandate/1", required: true },
-      endpoints: { feed: `${baseUrl}/feed`, llms_txt: `${baseUrl}/llms.txt` },
+      endpoints: { feed: `${baseUrl}/feed`, discover: `${baseUrl}/v1/discover`, payments: `${baseUrl}/v1/payment-methods`, llms_txt: `${baseUrl}/llms.txt` },
       lint_score: lintCatalog(this.catalog).score,
     };
   }
@@ -107,6 +107,16 @@ export class MerxEngine extends EventEmitter {
     return matchIntent(this.view(), intent, this.scorer);
   }
 
+  paymentMethods(filter: { currency?: string; country?: string } = {}) {
+    if (!filter || typeof filter !== "object" || Array.isArray(filter) || (filter.currency !== undefined && (typeof filter.currency !== "string" || !/^[A-Z]{3}$/.test(filter.currency))) || (filter.country !== undefined && (typeof filter.country !== "string" || !/^[A-Z]{2}$/.test(filter.country)))) throw new MerxError("invalid", "payment filters require ISO currency and country codes");
+    return this.payments.list(filter);
+  }
+
+  discover(input: CapabilityRequest) {
+    const packet = buildCapabilityPacket(this.view(), this.updatedAt, input, this.scorer, (filter) => this.paymentMethods(filter));
+    return { ...packet, signature: signObject(packet, this.keys) };
+  }
+
   // ------------------------------------------------------------ negotiation
 
   negotiate(req: NegotiationRequest): NegotiationResponse {
@@ -121,11 +131,12 @@ export class MerxEngine extends EventEmitter {
 
   // ------------------------------------------------------------ checkout
 
-  createQuote(input: { lines: QuoteLine[]; ship_to: string; shipping_method?: string }): Quote {
+  createQuote(input: { lines: QuoteLine[]; ship_to: string; shipping_method?: string; payment_method?: string }): Quote {
     const { lines, ship_to } = input;
     if (!Array.isArray(lines) || lines.length === 0) throw new MerxError("invalid", "lines[] required");
     if (!ship_to) throw new MerxError("invalid", "ship_to (ISO country) required");
     const v = this.view();
+    const payment = this.payments.select(input.payment_method, { currency: v.store.currency, country: ship_to });
     const distinct = new Set(lines.map((l) => l.item_id)).size;
     if (distinct !== lines.length) throw new MerxError("invalid", "duplicate item_id in lines; merge quantities");
     const deals: string[] = [];
@@ -170,6 +181,7 @@ export class MerxEngine extends EventEmitter {
       currency: v.store.currency,
       tax_included: v.policies.tax_included,
       ship_to,
+      payment_method: payment.id,
       expires_at: new Date(Date.now() + this.quoteTtl * 1000).toISOString(),
     };
     quote.signature = signObject(quote, this.keys);
@@ -219,7 +231,6 @@ export class MerxEngine extends EventEmitter {
       this.updatedAt.set(item.id, now);
     }
     const order_id = newId("ord");
-    const instructions = await this.payment.createPayment({ order_id, total: q.total, currency: q.currency });
     const receiptPayload = {
       typ: "merx-receipt/1",
       order_id,
@@ -237,14 +248,40 @@ export class MerxEngine extends EventEmitter {
       buyer: b,
       agent_id: input.agent_id,
       mandate_nonce: input.mandate.payload.nonce,
-      status: "awaiting_payment",
-      payment: { method: this.payment.id, instructions },
+      status: "payment_pending",
+      payment: { method: q.payment_method, instructions: {} },
       created_at: now,
       receipt: { payload: receiptPayload, signature: signObject(receiptPayload, this.keys) },
     };
     this.orders.set(order_id, order);
+    await this.retryPayment(order_id);
     this.emit("order.created", order);
     return order;
+  }
+
+  /** Server-side recovery hook. Do not expose without authenticating the caller. */
+  async retryPayment(orderId: string): Promise<Order> {
+    const existing = this.paymentAttempts.get(orderId);
+    if (existing) return existing;
+    const order = this.getOrder(orderId);
+    if (order.status !== "payment_pending" && order.status !== "payment_setup_failed") return order;
+    const attempt = Promise.resolve().then(async () => {
+      order.status = "payment_pending";
+      delete order.payment.error;
+      try {
+        const provider = this.payments.select(order.payment.method, { currency: order.quote.currency, country: order.quote.ship_to });
+        order.payment.instructions = await provider.createPayment({ order_id: order.order_id, total: order.quote.total, currency: order.quote.currency, country: order.quote.ship_to, quote_id: order.quote.quote_id, quote_hash: sha256(canonicalize(order.quote)), idempotency_key: order.order_id });
+        order.status = "awaiting_payment";
+      } catch {
+        // A timeout may have happened after provider-side creation. Keep the order
+        // and reservation; retry the same provider with the same idempotency key.
+        order.status = "payment_setup_failed";
+        order.payment.error = "payment_setup_failed";
+      }
+      return order;
+    });
+    this.paymentAttempts.set(orderId, attempt);
+    try { return await attempt; } finally { this.paymentAttempts.delete(orderId); }
   }
 
   getOrder(id: string): Order {

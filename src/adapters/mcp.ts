@@ -22,7 +22,7 @@ export const mcpAdapter: Adapter = {
           return rpcOk(msg.id, {
             protocolVersion: msg.params?.protocolVersion ?? "2025-06-18",
             capabilities: { tools: { listChanged: false } },
-            serverInfo: { name: `merx:${engine.catalog.store.id}`, version: "0.1.0" },
+            serverInfo: { name: `merx:${engine.catalog.store.id}`, version: "0.2.0" },
             instructions: `You are connected to ${engine.catalog.store.name}, an agent-only store. Start with find_products. Prices are integer minor units in ${engine.catalog.store.currency}. place_order requires a mandate signed by your human.`,
           });
         case "ping":

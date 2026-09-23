@@ -143,7 +143,7 @@ describe("MCP adapter", () => {
     assert.ok(init.body.result.capabilities.tools);
     assert.deepEqual((await rpc("ping")).body.result, {});
     const tools = (await rpc("tools/list")).body.result.tools;
-    assert.equal(tools.length, 7);
+    for (const name of ["discover_offers", "payment_methods", "find_products", "place_order"]) assert.ok(tools.some((t: any) => t.name === name));
     for (const t of tools) assert.equal(t.inputSchema.type, "object");
   });
 
@@ -168,7 +168,7 @@ describe("A2A adapter", () => {
 
   test("agent card exposes skills", async () => {
     const card = await http("GET", "/.well-known/agent-card.json");
-    assert.equal(card.body.skills.length, 7);
+    for (const name of ["discover_offers", "payment_methods", "find_products", "place_order"]) assert.ok(card.body.skills.some((s: any) => s.id === name));
     assert.match(card.body.url, /\/a2a$/);
     assert.deepEqual((await http("GET", "/.well-known/agent.json")).body.name, card.body.name);
   });

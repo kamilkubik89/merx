@@ -18,7 +18,9 @@ export interface Adapter {
 
 Operations are defined once in `src/adapters/operations.ts` with a name, description, JSON Schema input and a `run(engine, args, agentId)` function:
 
-`store_info`, `find_products`, `get_product`, `negotiate`, `create_quote`, `place_order`, `get_order`.
+`store_info`, `find_products`, `discover_offers`, `payment_methods`, `get_product`, `negotiate`, `create_quote`, `place_order`, `get_order`.
+
+`discover_offers` returns the experimental [Capability Feed](CAPABILITY_FEED.md). Payment execution is a separate extension point; see the [payment-provider guide](PAYMENTS.md).
 
 The simplest adapter maps a protocol message to an operation name and input, calls `run`, and maps the result back. The MCP adapter is about 60 lines; read it as a reference.
 

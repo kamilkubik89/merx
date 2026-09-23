@@ -1,5 +1,7 @@
 # Merx specification 0.1 (draft)
 
+The base wire formats below remain version 0.1. Merx implementation 0.2.0 adds the experimental [Capability Feed](CAPABILITY_FEED.md) and [payment-provider discovery](PAYMENTS.md). Quotes now include a signed `payment_method` ID. Accepted orders may be `payment_pending` or `payment_setup_failed` before reaching `awaiting_payment`; a receipt proves order acceptance, not settlement.
+
 This document describes what a Merx store exposes to agents, independent of the wire protocol. The reference implementation lives in `src/core`. Key words MUST, SHOULD and MAY are used in the RFC 2119 sense.
 
 ## 1. Conventions
@@ -114,7 +116,7 @@ A `deal_token` is `base64url(canonical payload) "." base64url(signature)` with p
 
 ## 6. Quote
 
-`create_quote { lines: [{ item_id, quantity, deal_token? }], ship_to, shipping_method? }` returns a signed quote with lines, shipping, subtotal, total, `expires_at`. Stock for all lines is held until `expires_at`.
+`create_quote { lines: [{ item_id, quantity, deal_token? }], ship_to, shipping_method?, payment_method? }` returns a signed quote with lines, shipping, subtotal, total, selected `payment_method` and `expires_at`. Stock for all lines is held until `expires_at`.
 
 ## 7. Mandate (`merx-mandate/1`)
 
