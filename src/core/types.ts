@@ -175,6 +175,7 @@ export type Quote = {
   currency: string;
   tax_included: boolean;
   ship_to: string;
+  payment_method: string; // provider selected before signing the quote
   expires_at: string; // stock is held until then
   signature?: Signature;
 };
@@ -205,8 +206,8 @@ export type Order = {
   buyer: Buyer;
   agent_id: string;
   mandate_nonce: string;
-  status: "awaiting_payment" | "paid" | "shipped" | "delivered" | "cancelled";
-  payment: { method: string; instructions: Record<string, unknown> };
+  status: "payment_pending" | "payment_setup_failed" | "awaiting_payment" | "paid" | "shipped" | "delivered" | "cancelled";
+  payment: { method: string; instructions: Record<string, unknown>; error?: "payment_setup_failed" };
   created_at: string;
   receipt: { payload: Record<string, unknown>; signature: Signature };
 };

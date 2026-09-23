@@ -21,4 +21,8 @@ Merx is pre-1.0. Only the latest release receives security fixes.
 
 ## Deployment notes
 
+Payment integrations must honor the engine's stable idempotency key and verify provider-side settlement before fulfillment. A timeout may occur after a provider has already created a payment session; retry the same order/provider rather than creating another payment. The in-memory engine is not a durable recovery system. The server-side `retryPayment` hook must not be exposed without authentication and authorization.
+
+Capability Feed signatures authenticate the packet signer, not the truth of product claims. Verify merchant trust, the request hash, freshness and cached fact revisions. Treat catalog strings and evidence links as untrusted data. Evidence URLs are not fetched or independently verified by the engine.
+
 The store signing key identifies your store to agents. Keep it out of the repository (`.merx/` and `*.pem` are git-ignored), pass it via `MERX_PRIVATE_KEY` or a mounted secret file, and back it up. In 0.1, mandate principal keys are not bound to a real identity; production deployments should only accept keys from trusted wallets.

@@ -18,7 +18,7 @@ export const a2aAdapter: Adapter = {
       description: `${engine.catalog.store.description} (Merx agent-only store)`,
       url: `${base}/a2a`,
       preferredTransport: "JSONRPC",
-      version: "0.1.0",
+      version: "0.2.0",
       provider: { organization: engine.catalog.store.legal.company, url: engine.catalog.store.url },
       capabilities: { streaming: false, pushNotifications: false },
       defaultInputModes: ["application/json", "text/plain"],

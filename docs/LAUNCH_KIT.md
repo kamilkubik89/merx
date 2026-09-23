@@ -4,6 +4,8 @@ Ready-to-edit drafts for the maintainer. These have not been posted. Share where
 
 ## Short description
 
+Project page and interactive examples: https://kamilkubik89.github.io/merx/
+
 Merx is an open-source TypeScript store engine for AI agents: signed product feeds, intent matching, policy-based negotiation and mandate-bound orders over MCP, A2A and REST.
 
 ## Short social post
@@ -15,6 +17,8 @@ I built Merx: structured product facts, explainable matching, policy-based negot
 It is an early reference implementation with in-memory storage. I would love feedback from people building commerce agents and protocol adapters.
 
 Try it: https://github.com/kamilkubik89/merx
+
+Explore the engine's matching results in your browser: https://kamilkubik89.github.io/merx/#explore
 
 ## Technical community / Show HN draft
 
@@ -52,6 +56,8 @@ Record the actual command output. Do not present the scripted buyer as an autono
 - Review GitHub traffic and referring sites after the launch. Compare visits, clones, useful feedback and contributions as well as stars.
 
 ## Sharing assets
+
+- [Public project page with social preview metadata](https://kamilkubik89.github.io/merx/)
 
 - [Repository banner](assets/banner.svg)
 - [Social preview PNG, 1280 x 640](assets/social-preview.png) — upload under repository Settings > General > Social preview.

@@ -1,11 +1,11 @@
 {
   "name": "merx",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Open-source commerce engine for stores that sell only to AI agents. Signed feeds, intent matching, policy negotiation, mandate-bound checkout. Any protocol via adapters (MCP, A2A, REST, bring your own).",
   "type": "module",
   "license": "MIT",
   "author": "Kamil Kubík (https://github.com/kamilkubik89)",
-  "homepage": "https://github.com/kamilkubik89/merx#readme",
+  "homepage": "https://kamilkubik89.github.io/merx/",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/kamilkubik89/merx.git"
@@ -20,8 +20,10 @@
     "merx": "src/cli.ts"
   },
   "scripts": {
+    "site:build": "node --experimental-strip-types --disable-warning=ExperimentalWarning scripts/build-site.ts",
     "start": "node --experimental-strip-types --disable-warning=ExperimentalWarning src/server.ts",
     "demo": "node --experimental-strip-types --disable-warning=ExperimentalWarning examples/buyer-agent.ts",
+    "demo:feed": "node --experimental-strip-types --disable-warning=ExperimentalWarning examples/capability-feed.ts",
     "merx": "node --experimental-strip-types --disable-warning=ExperimentalWarning src/cli.ts",
     "lint:catalog": "node --experimental-strip-types --disable-warning=ExperimentalWarning src/cli.ts lint",
     "test": "node --experimental-strip-types --disable-warning=ExperimentalWarning --test test/*.test.ts",
