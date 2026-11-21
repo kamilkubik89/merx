@@ -91,7 +91,10 @@ try {
   });
   console.log(`   ${order.order_id} — ${order.status}, pay via ${order.payment.method}`);
   const receiptOk = verifyObject(order.receipt.payload, order.receipt.signature.value, storeKey);
-  console.log(`   store-signed receipt valid: ${receiptOk}`);
+  console.log(`   store-signed receipt valid: ${receiptOk} (order accepted — not proof of payment)`);
+  const status = await fetch(`${BASE}/v1/orders/${order.order_id}/payment`, { headers: { "merx-order-token": order.access_token } }).then((r) => r.json()) as any;
+  console.log(`   payment_status: ${status.payment.status}, settlement verified by provider: ${status.payment.verifies_settlement}`);
+  console.log(`   next action: ${status.next_action.type}${status.next_action.settlement ? ` (${status.next_action.settlement}; demo instructions)` : ""}`);
 
   step(8, "Replay attack with the same mandate");
   const q2 = await call("POST", "/v1/quotes", { ship_to: "SK", lines: [{ item_id: "filters-v60-02-100", quantity: 1 }] });

@@ -19,7 +19,7 @@ Choose a small improvement with a clear result. Ask in [Discussions](https://git
 | Tests | Cover an untested catalog validation edge case | A focused test demonstrates the intended result without network access |
 | Adapters | Document a mapping for a proposed protocol | The proposal links its specification and identifies supported operations and gaps |
 
-Persistence, payment integrations and identity verification need design discussion and are larger projects.
+Larger work — a PostgreSQL store, new payment adapters, identity verification, x402/AP2 — starts with a design discussion. Payment adapters must be testable offline against mocked HTTP, must not add runtime dependencies to core, and must never require live credentials in CI. Read [ADR 0001](docs/adr/0001-verified-payments.md) first.
 
 ## Development workflow
 
