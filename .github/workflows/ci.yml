@@ -56,6 +56,8 @@ jobs:
         run: npm run demo
       - name: Capability Feed demo
         run: npm run demo:feed
+      - name: Verified payments demo (offline, no credentials)
+        run: npm run demo:payments
 
   docker:
     name: Docker build & smoke test

@@ -82,7 +82,7 @@ export function negotiate(
 }
 
 export class MerxError extends Error {
-  code: "not_found" | "invalid" | "conflict" | "unauthorized" | "expired";
+  code: "not_found" | "invalid" | "conflict" | "unauthorized" | "expired" | "unauthenticated" | "unavailable";
   constructor(code: MerxError["code"], message: string) {
     super(message);
     this.code = code;
