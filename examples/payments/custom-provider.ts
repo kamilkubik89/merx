@@ -1,6 +1,12 @@
 import type { PaymentProvider, PaymentRequest } from "../../src/core/payments.ts";
 
-/** Inject your provider's official SDK here; do not put credentials in metadata. */
+/**
+ * Minimal hosted-checkout scaffold: returns a redirect URL, but Merx treats the
+ * payment as unverified (`verifies_settlement: false`). To verify settlement,
+ * also implement `initiatePayment`, `getPaymentStatus` and `verifyWebhook`;
+ * see src/payments/stripe.ts and docs/PAYMENTS.md#writing-a-payment-adapter.
+ * Inject your provider's official SDK here; do not put credentials in metadata.
+ */
 export function hostedCheckoutProvider(config: {
   id: string;
   label: string;

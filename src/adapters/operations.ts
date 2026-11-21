@@ -109,7 +109,7 @@ export const operations: Operation[] = [
   {
     name: "place_order",
     description:
-      "Commit a quote. Requires a mandate signed by the human principal (spending limit, merchant scope, expiry). Returns the order, payment instructions and a store-signed receipt.",
+      "Commit a quote. Requires a mandate signed by the human principal (spending limit, merchant scope, expiry). Returns the order, payment next step, a store-signed receipt (order accepted, not paid) and a one-time order access_token for payment_status.",
     input_schema: {
       type: "object",
       required: ["quote_id", "mandate", "buyer"],
@@ -127,13 +127,30 @@ export const operations: Operation[] = [
         },
       },
     },
-    run: (e, a, agent) => e.placeOrder({ ...a, agent_id: agent }),
+    run: async (e, a, agent) => {
+      const { order, access_token } = await e.checkout({ ...a, agent_id: agent });
+      return { ...order, access_token };
+    },
   },
   {
     name: "get_order",
-    description: "Order status, payment instructions and signed receipt.",
-    input_schema: { type: "object", required: ["order_id"], properties: { order_id: { type: "string" } } },
-    run: (e, a) => e.getOrder(a.order_id),
+    description: "Order status, payment instructions and signed receipt. Pass the order access_token returned by place_order; stores may require it.",
+    input_schema: { type: "object", required: ["order_id"], properties: { order_id: { type: "string" }, access_token: { type: "string", description: "Order access token returned once by place_order" } } },
+    run: (e, a) => e.getOrderForAgent(a.order_id, a.access_token),
+  },
+  {
+    name: "payment_status",
+    description:
+      "Access-controlled payment state for one order (unpaid, requires_action, payment_pending, paid, payment_failed, canceled, refunded...), whether the provider verifies settlement, and the next action. A browser redirect is never proof of payment; poll this instead.",
+    input_schema: { type: "object", required: ["order_id", "access_token"], properties: { order_id: { type: "string" }, access_token: { type: "string", description: "Order access token returned once by place_order" } } },
+    run: (e, a) => e.paymentStatus(a.order_id, a.access_token),
+  },
+  {
+    name: "payment_confirmation",
+    description:
+      "Store-signed merx-payment-confirmation/1 statement, issued only after a verified provider event or reconciliation. Distinct from the order receipt, which proves acceptance, not settlement.",
+    input_schema: { type: "object", required: ["order_id", "access_token"], properties: { order_id: { type: "string" }, access_token: { type: "string" } } },
+    run: (e, a) => e.paymentConfirmation(a.order_id, a.access_token),
   },
 ];
 
