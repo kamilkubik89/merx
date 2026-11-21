@@ -1,6 +1,6 @@
 # Merx specification 0.1 (draft)
 
-The base wire formats below remain version 0.1. Merx implementation 0.2.0 adds the experimental [Capability Feed](CAPABILITY_FEED.md) and [payment-provider discovery](PAYMENTS.md). Quotes now include a signed `payment_method` ID. Accepted orders may be `payment_pending` or `payment_setup_failed` before reaching `awaiting_payment`; a receipt proves order acceptance, not settlement.
+The base wire formats below remain version 0.1. Merx implementation 0.2.0 added the experimental [Capability Feed](CAPABILITY_FEED.md) and [payment-provider discovery](PAYMENTS.md); quotes include a signed `payment_method` ID. Implementation 0.3.0 adds a payment state machine on `order.payment.status`, the `merx-payment-confirmation/1` signed statement and order access tokens; see [Payment confirmation](#10-payment-confirmation-merx-payment-confirmation1) below and [ADR 0001](adr/0001-verified-payments.md). A receipt proves order acceptance, not settlement.
 
 This document describes what a Merx store exposes to agents, independent of the wire protocol. The reference implementation lives in `src/core`. Key words MUST, SHOULD and MAY are used in the RFC 2119 sense.
 
@@ -142,7 +142,7 @@ Binding `principal_key` to a real person (bank, wallet provider, `did`) is outsi
 
 ## 8. Order and receipt
 
-`place_order { quote_id, mandate, buyer }` returns the order with `payment` instructions and a receipt:
+`place_order { quote_id, mandate, buyer }` returns the order (with `payment.status` and next-step instructions), a one-time `access_token` and a receipt:
 
 ```json
 {
@@ -156,8 +156,42 @@ Binding `principal_key` to a real person (bank, wallet provider, `did`) is outsi
 }
 ```
 
-Receipts are portable proofs of purchase. A future version will define how agents publish outcome attestations (delivered on time, matched description) referencing a receipt, forming a verifiable reputation layer.
+Receipts are portable proofs of order acceptance — not of payment; see section 10 for payment confirmations. A future version will define how agents publish outcome attestations (delivered on time, matched description) referencing a receipt, forming a verifiable reputation layer.
 
 ## 9. Errors
 
-Adapters map engine errors to their protocol. REST uses `{ "error": { "code", "message" } }` with codes `invalid` (400), `unauthorized` (403), `not_found` (404), `conflict` (409), `expired` (410).
+Adapters map engine errors to their protocol. REST uses `{ "error": { "code", "message" } }` with codes `invalid` (400), `unauthenticated` (401, administrative routes), `unauthorized` (403), `not_found` (404), `conflict` (409), `expired` (410), `unavailable` (503, store loading or payment provider unavailable).
+
+## 10. Payment confirmation (`merx-payment-confirmation/1`)
+
+Issued by the store once a payment provider event or a server-side reconciliation verified settlement. Signed with the store key over the canonical JSON of `payload`, exactly like receipts.
+
+```json
+{
+  "payload": {
+    "typ": "merx-payment-confirmation/1",
+    "order_id": "ord_…",
+    "store_id": "tatra-coffee",
+    "quote_hash": "<sha256 of the canonical signed quote>",
+    "receipt_hash": "<sha256 of the canonical receipt payload>",
+    "amount": { "amount": 3270, "currency": "EUR" },
+    "provider": "stripe_checkout",
+    "provider_payment_id": "cs_test_…",
+    "status": "paid",
+    "verified_by": "webhook",
+    "event_id": "evt_…",
+    "verified_at": "2026-11-21T10:00:00.000Z"
+  },
+  "signature": { "alg": "Ed25519", "key_id": "ed25519:…", "value": "<base64>" }
+}
+```
+
+Agents verify the signature with the manifest key and check `order_id`, `amount` and `quote_hash` against their own records. A confirmation is never issued for providers that do not verify settlement (`verifies_settlement: false`).
+
+### Payment status values
+
+`unpaid`, `requires_action`, `payment_pending`, `paid`, `payment_failed`, `canceled`, `partially_refunded`, `refunded`, `disputed`. Allowed transitions are defined in ADR 0001; backward transitions are ignored.
+
+### Order access token
+
+`place_order` returns `access_token` (base64url, 256 bits) once. Clients send it as `Merx-Order-Token` over REST or as the `access_token` argument over MCP/A2A. Stores keep only its SHA-256 hash.

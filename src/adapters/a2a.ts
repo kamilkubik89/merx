@@ -1,5 +1,6 @@
 import { randomUUID } from "node:crypto";
 import type { Adapter } from "./adapter.ts";
+import { MERX_RELEASE } from "../version.ts";
 import { operations, findOp } from "./operations.ts";
 import { MerxError } from "../core/negotiate.ts";
 
@@ -18,7 +19,7 @@ export const a2aAdapter: Adapter = {
       description: `${engine.catalog.store.description} (Merx agent-only store)`,
       url: `${base}/a2a`,
       preferredTransport: "JSONRPC",
-      version: "0.2.0",
+      version: MERX_RELEASE,
       provider: { organization: engine.catalog.store.legal.company, url: engine.catalog.store.url },
       capabilities: { streaming: false, pushNotifications: false },
       defaultInputModes: ["application/json", "text/plain"],

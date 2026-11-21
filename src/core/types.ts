@@ -8,6 +8,8 @@
  * All money is integer minor units (cents). No floats, ever.
  */
 
+import type { PaymentStatus } from "./payment-state.ts";
+
 export type Money = { amount: number; currency: string };
 
 /** Where a fact comes from. Agents weight facts by provenance. */
@@ -200,14 +202,58 @@ export type Buyer = {
   address: { line1: string; city: string; postal_code: string; country: string };
 };
 
+/** Signed statement that a payment provider event was verified server-side. Distinct from the order receipt. */
+export type PaymentConfirmation = {
+  payload: {
+    typ: "merx-payment-confirmation/1";
+    order_id: string;
+    store_id: string;
+    quote_hash: string;
+    receipt_hash: string;
+    amount: Money;
+    provider: string;
+    provider_payment_id: string;
+    status: "paid";
+    verified_by: "webhook" | "reconciliation";
+    event_id?: string;
+    verified_at: string;
+  };
+  signature: Signature;
+};
+
+export type OrderPayment = {
+  method: string;
+  /** What the buyer needs next (redirect URL, demo transfer details...). Defined by the trusted provider adapter. */
+  instructions: Record<string, unknown>;
+  error?: "payment_setup_failed";
+  /** Payment state machine, independent of fulfillment. See docs/adr/0001-verified-payments.md. */
+  status: PaymentStatus;
+  /** True only for providers that verify settlement (webhook or server-to-server status check). */
+  verifies_settlement: boolean;
+  amount: number;
+  currency: string;
+  refunded_amount: number;
+  attempt_id?: string;
+  attempt?: number;
+  provider_payment_id?: string;
+  updated_at?: string;
+  confirmation?: PaymentConfirmation;
+  /** Administrative refunds issued through the provider. */
+  refunds?: { refund_id: string; amount: number; idempotency_key: string; status: "succeeded" | "pending"; created_at: string }[];
+};
+
 export type Order = {
   order_id: string;
   quote: Quote;
   buyer: Buyer;
   agent_id: string;
   mandate_nonce: string;
-  status: "payment_pending" | "payment_setup_failed" | "awaiting_payment" | "paid" | "shipped" | "delivered" | "cancelled";
-  payment: { method: string; instructions: Record<string, unknown>; error?: "payment_setup_failed" };
+  /**
+   * Legacy combined status kept for 0.2 compatibility. New integrations should
+   * read `payment.status` for money and track fulfillment separately.
+   */
+  status: "payment_pending" | "payment_setup_failed" | "awaiting_payment" | "paid" | "refunded" | "shipped" | "delivered" | "cancelled";
+  payment: OrderPayment;
   created_at: string;
   receipt: { payload: Record<string, unknown>; signature: Signature };
 };

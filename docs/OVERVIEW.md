@@ -21,6 +21,6 @@ npm run demo
 npm start
 ```
 
-See the [main README](../README.md) for setup details, architecture and the roadmap. Merx is a reference implementation with in-memory storage, not production software. Explore the [Capability Feed](CAPABILITY_FEED.md) and [payment integration guide](PAYMENTS.md) for the latest extension points.
+See the [main README](../README.md) for setup details, architecture and the roadmap. Merx is a pre-1.0 reference implementation with optional durable SQLite storage and optional verified payment adapters (Stripe Checkout, GoPay). Explore the [Capability Feed](CAPABILITY_FEED.md) and [payment integration guide](PAYMENTS.md) for the latest extension points.
 
 Author: [Kamil Kubík](https://github.com/kamilkubik89) · [MIT license](../LICENSE)
