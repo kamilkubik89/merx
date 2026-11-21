@@ -1,4 +1,5 @@
 import type { Adapter } from "./adapter.ts";
+import { MERX_RELEASE } from "../version.ts";
 import { operations, findOp } from "./operations.ts";
 import { MerxError } from "../core/negotiate.ts";
 import { RawResponse } from "../http/router.ts";
@@ -22,8 +23,8 @@ export const mcpAdapter: Adapter = {
           return rpcOk(msg.id, {
             protocolVersion: msg.params?.protocolVersion ?? "2025-06-18",
             capabilities: { tools: { listChanged: false } },
-            serverInfo: { name: `merx:${engine.catalog.store.id}`, version: "0.2.0" },
-            instructions: `You are connected to ${engine.catalog.store.name}, an agent-only store. Start with find_products. Prices are integer minor units in ${engine.catalog.store.currency}. place_order requires a mandate signed by your human.`,
+            serverInfo: { name: `merx:${engine.catalog.store.id}`, version: MERX_RELEASE },
+            instructions: `You are connected to ${engine.catalog.store.name}, an agent-only store. Start with find_products. Prices are integer minor units in ${engine.catalog.store.currency}. place_order requires a mandate signed by your human and returns a one-time access_token; use it with payment_status. A receipt means the order was accepted, not paid.`,
           });
         case "ping":
           return rpcOk(msg.id, {});
